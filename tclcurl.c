@@ -316,9 +316,6 @@ curlConfigTransfer(Tcl_Interp *interp, struct curlObjData *curlData,
     int            tableIndex;
     int            i,j;
 
-    Tcl_Obj     *resultPtr;
-    char        errorMsg[500];
-
     for(i=2,j=3;i<objc;i=i+2,j=j+2) {
         if (Tcl_GetIndexFromObj(interp, objv[i], configTable, "option", 
                 TCL_EXACT, &tableIndex)==TCL_ERROR) {
@@ -2618,7 +2615,7 @@ curlChunkBgnProcInvoke (const void *transfer_info, void *curlDataPtr, int remain
     }
     
     Tcl_SetVar2Ex(curlData->interp,curlData->chunkBgnVar,"time",
-            Tcl_NewLongObj(fileinfoPtr->time),0);    
+            Tcl_NewWideIntObj(fileinfoPtr->time),0);    
 
     Tcl_SetVar2Ex(curlData->interp,curlData->chunkBgnVar,"perm",
             Tcl_NewIntObj(fileinfoPtr->perm),0);    
@@ -2628,7 +2625,7 @@ curlChunkBgnProcInvoke (const void *transfer_info, void *curlDataPtr, int remain
     Tcl_SetVar2Ex(curlData->interp,curlData->chunkBgnVar,"gid",
             Tcl_NewIntObj(fileinfoPtr->gid),0);
     Tcl_SetVar2Ex(curlData->interp,curlData->chunkBgnVar,"size",
-            Tcl_NewLongObj(fileinfoPtr->size),0);    
+            Tcl_NewWideIntObj(fileinfoPtr->size),0);    
     Tcl_SetVar2Ex(curlData->interp,curlData->chunkBgnVar,"hardlinks",
             Tcl_NewIntObj(fileinfoPtr->hardlinks),0);
     Tcl_SetVar2Ex(curlData->interp,curlData->chunkBgnVar,"flags",
@@ -2875,7 +2872,7 @@ curlDebugProcInvoke(CURL *curlHandle, curl_infotype infoType,
     Tcl_Obj             *objv[3];
     char                tclCommand[300];
 
-    snprintf(tclCommand,300,"%s %d %d",curlData->debugProc,infoType,size);
+    snprintf(tclCommand,300,"%s %d %d",curlData->debugProc,infoType,(int)size);
     tclProcPtr=Tcl_NewStringObj(tclCommand,-1);
 
     objv[0]=Tcl_NewStringObj(curlData->debugProc,-1);
@@ -3861,21 +3858,21 @@ curlShareLockFunc (CURL *handle, curl_lock_data data, curl_lock_access access
         , void *userptr) {
 
     switch(data) {
-        CURL_LOCK_DATA_COOKIE:
-            Tcl_MutexLock(&cookieLock);
-            break;
-        CURL_LOCK_DATA_DNS:
-            Tcl_MutexLock(&dnsLock);
-            break;
-        CURL_LOCK_DATA_SSL_SESSION:
-            Tcl_MutexLock(&sslLock);
-            break;
-        CURL_LOCK_DATA_CONNECT:
-            Tcl_MutexLock(&connectLock);
-            break;
-        default:
-            /* Prevent useless compile warnings */
-            break;
+    case CURL_LOCK_DATA_COOKIE:
+        Tcl_MutexLock(&cookieLock);
+        break;
+    case CURL_LOCK_DATA_DNS:
+        Tcl_MutexLock(&dnsLock);
+        break;
+    case CURL_LOCK_DATA_SSL_SESSION:
+        Tcl_MutexLock(&sslLock);
+        break;
+    case CURL_LOCK_DATA_CONNECT:
+        Tcl_MutexLock(&connectLock);
+        break;
+    default:
+        /* Prevent useless compile warnings */
+        break;
     }
 }
 
@@ -3896,20 +3893,20 @@ void
 curlShareUnLockFunc(CURL *handle, curl_lock_data data, void *userptr) {
 
     switch(data) {
-        CURL_LOCK_DATA_COOKIE:
-            Tcl_MutexUnlock(&cookieLock);
-            break;
-        CURL_LOCK_DATA_DNS:
-            Tcl_MutexUnlock(&dnsLock);
-            break;
-        CURL_LOCK_DATA_SSL_SESSION:
-            Tcl_MutexUnlock(&sslLock);
-            break;
-        CURL_LOCK_DATA_CONNECT:
-            Tcl_MutexUnlock(&connectLock);
-            break;
-        default:
-            break;
+    case CURL_LOCK_DATA_COOKIE:
+        Tcl_MutexUnlock(&cookieLock);
+        break;
+    case CURL_LOCK_DATA_DNS:
+        Tcl_MutexUnlock(&dnsLock);
+        break;
+    case CURL_LOCK_DATA_SSL_SESSION:
+        Tcl_MutexUnlock(&sslLock);
+        break;
+    case CURL_LOCK_DATA_CONNECT:
+        Tcl_MutexUnlock(&connectLock);
+        break;
+    default:
+        break;
     }
 }
 
