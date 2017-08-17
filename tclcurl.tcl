@@ -6,13 +6,14 @@ namespace eval ::curl {
 critcl::userconfig define mode {choose mode of Curl to build and link against.} {static dynamic}
 
 if {[string match "win32*" [::critcl::targetplatform]]} {
-    critcl::clibraries -llibcurl -lws2_32
     critcl::cflags /D_CRT_SECURE_NO_WARNINGS
     switch -exact -- [critcl::userconfig query mode] {
 	static {
+            critcl::clibraries -llibcurl_a -lws2_32
 	    critcl::cflags /DDLL_EXPORT
 	}
 	dynamic {
+            critcl::clibraries -llibcurl -lws2_32
 	}
     }
 } else {
