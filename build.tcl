@@ -445,14 +445,14 @@ proc Xindex {name version pfile dstdir} {
 proc RunCritcl {args} {
     #puts [info level 0]
     if {![catch {
-	package require critcl::app 3.0
+	package require critcl::app 3.1
     }]} {
 	#puts "......... [package ifneeded critcl::app [package present critcl::app]]"
 	critcl::app::main $args
 	return
     } else {
 	foreach cmd {
-	    critcl3 critcl3.kit critcl3.tcl critcl3.exe
+	    critcl3 critcl3.kit critcl3.tcl critcl31.exe critcl3.exe
 	    critcl critcl.kit critcl.tcl critcl.exe
 	} {
 	    # Locate the candidate.

@@ -6,7 +6,8 @@ namespace eval ::curl {
 critcl::userconfig define mode {choose mode of Curl to build and link against.} {static dynamic}
 
 if {[string match "win32*" [::critcl::targetplatform]]} {
-    critcl::clibraries -llibcurl_a
+    critcl::clibraries -llibcurl -lws2_32
+    critcl::cflags /D_CRT_SECURE_NO_WARNINGS
     switch -exact -- [critcl::userconfig query mode] {
 	static {
 	    critcl::cflags /DDLL_EXPORT
@@ -589,4 +590,4 @@ critcl::ccommand ::curl::multiinit {cd interp objc objv} {
     return TCL_OK;
 }
 
-package provide TclCurl 7.41.0
+package provide TclCurl 7.55.1
