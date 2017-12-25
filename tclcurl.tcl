@@ -591,4 +591,4 @@ critcl::ccommand ::curl::multiinit {cd interp objc objv} {
     return TCL_OK;
 }
 
-package provide TclCurl 7.55.1
+package provide TclCurl 7.57.0
