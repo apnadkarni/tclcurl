@@ -9,11 +9,11 @@ if {[string match "win32*" [::critcl::targetplatform]]} {
     critcl::cflags /D_CRT_SECURE_NO_WARNINGS
     switch -exact -- [critcl::userconfig query mode] {
 	static {
-            critcl::clibraries -llibcurl_a -lws2_32
+            critcl::clibraries -llibcurl_a -lzlib_a -lws2_32 -ladvapi32 -lcrypt32 -lwldap32 -lNormaliz
 	    critcl::cflags /DDLL_EXPORT
 	}
 	dynamic {
-            critcl::clibraries -llibcurl -lws2_32
+            critcl::clibraries -llibcurl -lzlib -lws2_32 -ladvapi32 -lcrypt32 -lwldap32 -lNormaliz
 	}
     }
 } else {
@@ -591,4 +591,4 @@ critcl::ccommand ::curl::multiinit {cd interp objc objv} {
     return TCL_OK;
 }
 
-package provide TclCurl 7.57.0
+package provide TclCurl 7.63.0

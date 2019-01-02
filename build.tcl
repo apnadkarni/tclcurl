@@ -171,6 +171,7 @@ proc _drop {{ldir {}}} {
 # }
 proc configure {args} {
     set curl ""
+    set curldeps ""
     set openssl ""
     set static 0
     set ldir [info library]
@@ -183,6 +184,9 @@ proc configure {args} {
 	    switch -exact -- $k {
 		-curl {
 		    set args [lassign $args curl]
+		}
+		-curldeps {
+		    set args [lassign $args curldeps]
 		}
 		-openssl {
 		    set args [lassign $args openssl]
@@ -201,10 +205,10 @@ proc configure {args} {
 	    }
 	}
     }
-    set d [dict create curl $curl openssl $openssl static $static ldir $ldir idir $idir config $config]
+    set d [dict create curl $curl curldeps $curldeps openssl $openssl static $static ldir $ldir idir $idir config $config]
     return $d
 }
-proc Hinstall {} { return "?destination? ?config? ?-curl <path>? ?-openssl <path>? ?-static? ?-dynamic?\n\tInstall all packages.\n\tdestination = path of package directory, default \[info library\].\n\tconfig = Critcl target to be used\n\t-curl <path> = path to Curl\n\t-openssl <path> = path to OpenSSL\n\t-static = link statically, default is to link dynamically\n\t-dynamic = link dynamically" }
+proc Hinstall {} { return "?destination? ?config? ?-curl <path>? ?-curldeps <path> ?-openssl <path>? ?-static? ?-dynamic?\n\tInstall all packages.\n\tdestination = path of package directory, default \[info library\].\n\tconfig = Critcl target to be used\n\t-curl <path> = path to Curl\n\t-openssl <path> = path to OpenSSL\n\t-static = link statically, default is to link dynamically\n\t-dynamic = link dynamically" }
 proc _install {args} {
     global packages
     set d [eval configure $args]
@@ -227,6 +231,11 @@ proc _install {args} {
 	lappend rcargs -cache [pwd]/BUILD.$p -I [pwd]
 	if {[string length $curl]} {
 	    lappend rcargs -L [file join $curl lib] -I [file join $curl include]
+	} else {
+	    lappend rcargs -L $ldir
+	}
+	if {[string length $curldeps]} {
+	    lappend rcargs -L [file join $curldeps lib] -I [file join $curldeps include]
 	} else {
 	    lappend rcargs -L $ldir
 	}
